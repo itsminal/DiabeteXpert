@@ -19,6 +19,7 @@ import warnings
 st.set_page_config(page_title="DiabeteXpert", layout="wide")
 
 # App title and description
+st.title("DiabeteXpert 🩺")
 st.title("Predicting Wellness, One Step at a Time")
 st.markdown("""
 A machine learning-powered system that analyzes health data to predict diabetes risk, enabling early intervention and proactive health management.
