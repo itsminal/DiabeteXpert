@@ -144,6 +144,7 @@ if page == "Manual Prediction":
         else:    
             model = models[selected_model]
         
+        
         # Get feature names
         # Try different approaches to get feature names
         feature_names = []
