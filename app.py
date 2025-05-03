@@ -12,18 +12,19 @@ from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
+from sklearn.metrics import accuracy_score
 import warnings
 
 
 # Set page configuration
 st.set_page_config(page_title="DiabeteXpert", layout="wide")
-
-# App title and description
+ 
+ # App title and description
 st.title("DiabeteXpert 🩺")
 st.title("Predicting Wellness, One Step at a Time")
 st.markdown("""
-A machine learning-powered system that analyzes health data to predict diabetes risk, enabling early intervention and proactive health management.
-""")
+ A machine learning-powered system that analyzes health data to predict diabetes risk, enabling early intervention and proactive health management.
+ """)
 
 # Function to load models
 @st.cache_resource
@@ -123,6 +124,7 @@ page = st.sidebar.radio("Go to", ["Manual Prediction", "Batch Prediction", "Mode
 # Load models
 models = load_models()
 model_names = list(models.keys()) if models else []
+model_names.append("Ensembled Model")
 
 # If no models are found, show an error
 if not model_names and page != "Debug":
@@ -137,7 +139,10 @@ if page == "Manual Prediction":
     else:
         # Select model for prediction
         selected_model = st.selectbox("Select model for prediction:", model_names)
-        model = models[selected_model]
+        if selected_model == "Ensembled Model":
+            model = models["Logistic Regression"]
+        else:    
+            model = models[selected_model]
         
         # Get feature names
         # Try different approaches to get feature names
@@ -193,8 +198,17 @@ if page == "Manual Prediction":
                 st.write(input_data)
                 
                 # Make prediction
-                prediction = model.predict(input_data)
-                
+                score = 0
+                if selected_model == "Ensembled Model":
+                    model_list = list(models.keys()) if models else []
+                    for model_n in model_list:
+                        model = models[model_n]
+                        pred = model.predict(input_data)
+                        score += pred
+                    
+                    prediction = score/3.0
+                else:
+                    prediction = model.predict(input_data)
                 st.subheader("Prediction Result")
                 st.write(f"**Predicted Class:** {prediction[0]}")
                 
